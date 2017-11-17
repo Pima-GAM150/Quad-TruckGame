@@ -30,7 +30,7 @@ public class DiscordChatActor : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.LogError($"{Log.Timestamp()} Discord-Login: {e.Message}");
+            Debug.LogError($"{Log.Timestamp()} Discord-Login: {e.Message} {e.StackTrace}");
             FailedLogin?.Invoke(Client, e);
             Client = null;
         }
@@ -69,7 +69,7 @@ public class DiscordChatActor : MonoBehaviour
         }
 
         Debug.Log($"{Log.Timestamp()} Discord-ClientReady: Client is connected.");
-        PushNotification.Instance.Push($"Connected as: {e.Client.CurrentUser.Username}", PushColor.Success);
+        PushNotification.Instance.Push($"Connected as: {e.Client.CurrentUser.Username}", "Success");
         return Task.CompletedTask;
     }
 
@@ -82,7 +82,7 @@ public class DiscordChatActor : MonoBehaviour
         }
 
         Debug.LogError($"{Log.Timestamp()} Discord-ClientErrored: {e.Exception}");
-        PushNotification.Instance.Push("Failed to connect to discord. Is your key valid?", PushColor.Failed);
+        PushNotification.Instance.Push("Failed to connect to discord. Is your key valid?", "Failed");
         return Task.CompletedTask;
     }
 
@@ -116,33 +116,7 @@ public class DiscordChatActor : MonoBehaviour
 
         var msg = $"{Log.Timestamp()} Discord-{e.Level}: {e.Message}";
         var push = PushNotification.Instance;
-        switch (e.Level)
-        {
-            case LogLevel.Debug:
-                Debug.Log(msg);
-                push.Push(e.Message, PushColor.Debug);
-                break;
-
-            case LogLevel.Info:
-                Debug.Log(msg);
-                push.Push(e.Message, PushColor.Info);
-                break;
-
-            case LogLevel.Warning:
-                Debug.LogWarning(msg);
-                push.Push(e.Message, PushColor.Warning);
-                break;
-
-            case LogLevel.Error:
-                Debug.LogError(msg);
-                push.Push(e.Message, PushColor.Error);
-                break;
-
-            case LogLevel.Critical:
-                Debug.LogAssertion(msg);
-                push.Push(e.Message, PushColor.Error);
-                break;
-        }
+        push.Push(e.Message, e.Level.ToString());
     }
 
     private DiscordConfiguration GenerateConfig(string token)

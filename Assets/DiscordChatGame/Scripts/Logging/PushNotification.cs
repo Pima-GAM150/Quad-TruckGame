@@ -1,56 +1,60 @@
 ﻿#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
 
+using Sirenix.OdinInspector;
+using Sirenix.Serialization;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum PushColor
+[Serializable]
+public struct PushColor
 {
-    Debug,
-    Info,
-    Warning,
-    Error,
-    Success,
-    Failed
+    public Color Info;
+    public Color Warning;
+    public Color Error;
+    public Color Debug;
+    public Color Success;
+    public Color Failed;
 }
 
-public class PushNotification : MonoBehaviour
+public class PushNotification : SerializedMonoBehaviour
 {
     public static PushNotification Instance { get; private set; }
 
-    [Tooltip("Color to use on push notifications from Discord-Info")]
-    public Color ColorInfo = Color.white;
+    [OdinSerialize]
+    public Dictionary<string, Color> Colors = new Dictionary<string, Color>()
+    {
+        { "Info", Color.white },
+        { "Warning", Color.yellow },
+        { "Error", Color.red },
+        { "Debug", Color.grey },
+        { "Success", Color.green },
+        { "Failed", Color.red },
+    };
 
-    [Tooltip("Color to use on push notifications from Discord-Error")]
-    public Color ColorError = Color.red;
-
-    [Tooltip("Color to use on push notifications from Discord-Warning")]
-    public Color ColorWarning = Color.yellow;
-
-    [Tooltip("Color to use on push notifications from Discord-Debug")]
-    public Color ColorDebug = Color.grey;
-
-    [Tooltip("Color to use for positive push notifications")]
-    public Color ColorSuccess = Color.green;
-
-    [Tooltip("Color to use for negative push notifications")]
-    public Color ColorFailed = Color.red;
-
+    [BoxGroup("Setup")]
     public GameObject PushNotificationPrefab;
-    public int Duration;
+
+    [BoxGroup("Setup")]
+    public int Duration = 2000;
+
     private readonly Queue<Tuple<GameObject, int>> _activeQueue = new Queue<Tuple<GameObject, int>>();
     private ScrollRect _scrollRect;
     private bool _queueActive;
 
-    public GameObject Push(string msg, PushColor color, float size = 12f)
+    public void Push(string msg, string type, float size = 12f)
     {
+        if (!Colors.ContainsKey(type))
+            return;
         var obj = Instantiate(PushNotificationPrefab, _scrollRect.content);
-        var text = obj.GetComponent<Text>();
-
-        text.color = GetColor(color);
+        var text = obj.GetComponent<TMP_Text>();
+        text.fontSize = size;
+        text.color = GetColor(type);
         text.text = msg;
         _activeQueue.Enqueue(new Tuple<GameObject, int>(obj, Mathf.RoundToInt(Time.time) + Duration));
 
@@ -60,8 +64,6 @@ public class PushNotification : MonoBehaviour
         //Canvas.ForceUpdateCanvases();
         _scrollRect.verticalNormalizedPosition = 0f;
         Canvas.ForceUpdateCanvases();
-
-        return obj;
     }
 
     private void Awake()
@@ -78,31 +80,9 @@ public class PushNotification : MonoBehaviour
         }
     }
 
-    private Color GetColor(PushColor color)
+    private Color GetColor(string type)
     {
-        switch (color)
-        {
-            case PushColor.Debug:
-                return ColorDebug;
-
-            case PushColor.Info:
-                return ColorInfo;
-
-            case PushColor.Warning:
-                return ColorWarning;
-
-            case PushColor.Error:
-                return ColorError;
-
-            case PushColor.Success:
-                return ColorSuccess;
-
-            case PushColor.Failed:
-                return ColorFailed;
-
-            default:
-                return Color.white;
-        }
+        return Colors[type];
     }
 
     private void Start()

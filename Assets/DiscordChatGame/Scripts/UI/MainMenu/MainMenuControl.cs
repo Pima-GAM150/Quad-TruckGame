@@ -9,50 +9,41 @@ using UnityEngine;
 using UnityEngine.UI;
 using DSharpPlus;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class MainMenuControl : MonoBehaviour
 {
-    /// <summary>
-    /// root object for the Discord Token screen.
-    /// </summary>
-    public GameObject TokenScreen;
-
-    /// <summary>
-    /// root object for the main menu page.
-    /// </summary>
-    public GameObject MainPage;
-
-    private TMP_InputField _tokenField;
+    public UISwitchGroup Switch;
+    public TMP_InputField TokenField;
     private Button _tokenButton;
+
+    public void StartButtonClicked()
+    {
+        SceneManager.LoadScene("TestRoom");
+    }
 
     public void Start()
     {
-        _tokenField = TokenScreen.GetComponentInChildren<TMP_InputField>();
-        if (_tokenField == null)
-        {
-            Debug.LogError($"{Log.Timestamp()} No InputField on TokenScreen!");
-        }
         var discordConfig = ConfigManager.Instance.GetConfig<DiscordConfig>();
         if (!string.IsNullOrEmpty(discordConfig.Token))
         {
-            _tokenField.text = discordConfig.Token;
+            TokenField.text = discordConfig.Token;
         }
     }
 
     public void OnTokenScreenCommit(Button b)
     {
         _tokenButton = b;
-        _tokenButton.interactable = false;
+        _tokenButton.enabled = false;
 
-        _tokenField.DeactivateInputField();
+        TokenField.DeactivateInputField();
 
         var ctx = DiscordChatActor.Instance;
-        Debug.Log($"{Log.Timestamp()} Sending Token to DiscordLauncher");
-
-        ctx.CreateClient(_tokenField.text);
+        Debug.Log($"{Log.Timestamp()} Sending Token {TokenField.text} to DiscordLauncher");
+        ctx.CreateClient(TokenField.text);
         ctx.Client.Ready += Client_Ready;
         ctx.FailedLogin += Client_FailedLogin;
-        ctx.Run(_tokenField.text);
+        ctx.Run(TokenField.text);
     }
 
     private void Client_FailedLogin(object sender, Exception ex)
@@ -62,9 +53,9 @@ public class MainMenuControl : MonoBehaviour
             MainThreadQueue.Instance.Queue(() => Client_FailedLogin(sender, ex));
             return;
         }
-        PushNotification.Instance.Push(ex.Message, PushColor.Failed);
-        _tokenField.ActivateInputField();
-        _tokenButton.interactable = true;
+        PushNotification.Instance.Push(ex.Message, "Failed");
+        TokenField.ActivateInputField();
+        _tokenButton.enabled = true;
     }
 
     private Task Client_Ready(ReadyEventArgs e)
@@ -76,12 +67,12 @@ public class MainMenuControl : MonoBehaviour
             return Task.CompletedTask;
         }
         var config = ConfigManager.Instance.GetConfig<DiscordConfig>();
-        config.Token = _tokenField.text;
+        config.Token = TokenField.text;
         config.Save();
 
+        Switch.SwitchTo("MainMenu");
+
         // switch menu screen.
-        TokenScreen.SetActive(false);
-        MainPage.SetActive(true);
         return Task.CompletedTask;
     }
 }
