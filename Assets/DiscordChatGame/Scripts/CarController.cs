@@ -22,6 +22,7 @@ public class CarController : MonoBehaviour {
         float steering = maxSteeringAngle * Input.GetAxis("Horizontal");
 
         wc.steerAngle = steering;
+        wc.motorTorque = motor;
 
         Vector3 position;
         Quaternion rotation;
@@ -30,10 +31,11 @@ public class CarController : MonoBehaviour {
         //rotation.w = 0f;
         rotation.y = Mathf.Clamp(rotation.y, -maxSteeringAngle, maxSteeringAngle);
         //wheel.transform.rotation = rotation;
-        rotation.eulerAngles = new Vector3(0f, Mathf.Clamp(steering, -maxSteeringAngle, maxSteeringAngle), 0f);
-        wheel.transform.rotation = rotation;
+        rotation.eulerAngles = new Vector3(0f, Mathf.Clamp(steering, -maxSteeringAngle, maxSteeringAngle), 90f);
+        wheel.transform.localRotation = rotation;
+        
         //wheel.transform.rotation = new Quaternion(wheel.transform.rotation.x, Mathf.Clamp(steering, -maxSteeringAngle, maxSteeringAngle), wheel.transform.rotation.z, wheel.transform.rotation.w);
-        Debug.Log(wc.steerAngle + ", " + rotation);
+        //Debug.Log(wc.steerAngle + ", " + rotation);
 
         //foreach (AxleInfo axleInfo in axleInfos)
         //{
