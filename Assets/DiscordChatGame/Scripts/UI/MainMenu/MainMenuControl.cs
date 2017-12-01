@@ -1,4 +1,5 @@
 ﻿#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+#pragma warning disable RECS0165 // Asynchronous methods should return a Task instead of void
 
 using System;
 using System.Collections;
@@ -10,33 +11,51 @@ using UnityEngine.UI;
 using DSharpPlus;
 using TMPro;
 using UnityEngine.SceneManagement;
+using Sirenix.OdinInspector;
 
-public class MainMenuControl : MonoBehaviour
+public class MainMenuControl : SerializedMonoBehaviour
 {
     public UISwitchGroup Switch;
+
+    [Required]
     public TMP_InputField TokenField;
-    private Button _tokenButton;
+
+    [Required]
+    public TMP_InputField ServerField;
+
+    [Required]
+    public Button TokenButton;
 
     public void StartButtonClicked()
     {
+        //TODO: Move to another script
         SceneManager.LoadScene("TestRoom");
     }
 
-    public void Start()
+    public async void Start()
     {
-        var discordConfig = ConfigManager.Instance.GetConfig<DiscordConfig>();
-        if (!string.IsNullOrEmpty(discordConfig.Token))
-        {
-            TokenField.text = discordConfig.Token;
-        }
+        await GetConfig();
+        OnTokenChanged();
     }
 
-    public void OnTokenScreenCommit(Button b)
+    public void OnTokenChanged()
     {
-        _tokenButton = b;
-        _tokenButton.enabled = false;
+        var canSubmit = TokenField.text.Length > 0 && ServerField.text.Length > 0;
+        TokenButton.interactable = canSubmit;
+    }
 
-        TokenField.DeactivateInputField();
+    private async Task GetConfig()
+    {
+        var discordConfig = await ConfigManager.Instance.GetConfig<DiscordConfig>();
+        TokenField.text = discordConfig.Token;
+        ServerField.text = discordConfig.ServerName;
+    }
+
+    public void OnTokenScreenCommit()
+    {
+        TokenButton.interactable = false;
+
+        TokenField.interactable = false;
 
         var ctx = DiscordChatActor.Instance;
         Debug.Log($"{Log.Timestamp()} Sending Token {TokenField.text} to DiscordLauncher");
@@ -54,25 +73,21 @@ public class MainMenuControl : MonoBehaviour
             return;
         }
         PushNotification.Instance.Push(ex.Message, "Failed");
-        TokenField.ActivateInputField();
-        _tokenButton.enabled = true;
+        TokenField.interactable = true;
+        TokenButton.interactable = true;
     }
 
-    private Task Client_Ready(ReadyEventArgs e)
+    private async Task Client_Ready(ReadyEventArgs e)
     {
         if (!MainThreadQueue.Instance.IsMain())
         {
-            MainThreadQueue.Instance.Queue(() => Client_Ready(e));
-
-            return Task.CompletedTask;
+            MainThreadQueue.Instance.Queue(async () => await Client_Ready(e));
         }
-        var config = ConfigManager.Instance.GetConfig<DiscordConfig>();
+        var config = await ConfigManager.Instance.GetConfig<DiscordConfig>();
         config.Token = TokenField.text;
+        config.ServerName = ServerField.text;
         config.Save();
 
         Switch.SwitchTo("MainMenu");
-
-        // switch menu screen.
-        return Task.CompletedTask;
     }
 }

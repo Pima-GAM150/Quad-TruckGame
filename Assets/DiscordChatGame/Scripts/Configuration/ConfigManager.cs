@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using UnityEngine;
 
 /// <summary>
@@ -25,7 +26,7 @@ public class ConfigManager : MonoBehaviour
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public T GetConfig<T>() where T : Config, new()
+    public async Task<T> GetConfig<T>() where T : Config, new()
     {
         if (_configs.ContainsKey(typeof(T)))
         {
@@ -33,7 +34,7 @@ public class ConfigManager : MonoBehaviour
         }
         else
         {
-            return LoadConfigFile<T>();
+            return await LoadConfigFile<T>();
         }
     }
 
@@ -41,7 +42,7 @@ public class ConfigManager : MonoBehaviour
     /// Loads a non MonoBehaviour Json Config file.
     /// </summary>
     /// <typeparam name="T">Type of the object to create</typeparam>
-    public T LoadConfigFile<T>() where T : Config, new()
+    public async Task<T> LoadConfigFile<T>() where T : Config, new()
     {
         FileInfo file = new FileInfo(_configPath + typeof(T) + ".json");
         Config cfg;
@@ -49,7 +50,7 @@ public class ConfigManager : MonoBehaviour
         {
             using (StreamReader reader = new StreamReader(file.OpenRead()))
             {
-                var json = reader.ReadToEnd();
+                var json = await reader.ReadToEndAsync();
                 Debug.Log($"{Log.ShortTime()} Loading Config from {file.FullName}");
                 cfg = JsonUtility.FromJson<T>(json);
             }
@@ -58,7 +59,7 @@ public class ConfigManager : MonoBehaviour
         {
             cfg = new T();
             Debug.Log($"{Log.ShortTime()} Created Config {file.FullName}");
-            SaveConfigFile(cfg);
+            await SaveConfigFile(cfg);
         }
         _configs.Add(typeof(T), cfg);
 
@@ -70,14 +71,14 @@ public class ConfigManager : MonoBehaviour
     /// </summary>
     /// <typeparam name="T">Type of the MonoBehaviour to create</typeparam>
     /// <param name="obj">the MonoBehaviour object to overwrite.</param>
-    public void LoadMonoConfigFile(MonoBehaviour obj)
+    public async Task LoadMonoConfigFile(MonoBehaviour obj)
     {
         FileInfo file = new FileInfo(_configPath + obj.GetType() + ".json");
         if (file.Exists)
         {
             using (StreamReader reader = new StreamReader(file.OpenRead()))
             {
-                var json = reader.ReadToEnd();
+                var json = await reader.ReadToEndAsync();
                 JsonUtility.FromJsonOverwrite(json, obj);
             }
         }
@@ -87,7 +88,7 @@ public class ConfigManager : MonoBehaviour
     /// Saves an object to a config file with the specified name.
     /// </summary>
     /// <param name="obj">object to save</param>
-    public void SaveConfigFile(object obj)
+    public async Task SaveConfigFile(object obj)
     {
         FileInfo file = new FileInfo(_configPath + obj.GetType() + ".json");
 
@@ -105,7 +106,7 @@ public class ConfigManager : MonoBehaviour
         using (StreamWriter writer = new StreamWriter(stream))
         {
             var json = JsonUtility.ToJson(obj);
-            writer.Write(json);
+            await writer.WriteAsync(json);
         }
         Debug.Log($"{Log.ShortTime()} Saved Config file {file.FullName}");
     }

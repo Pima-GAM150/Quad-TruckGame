@@ -7,4 +7,5 @@ using UnityEngine;
 public class DiscordConfig : Config
 {
     public string Token = "";
+    public string ServerName = "";
 }

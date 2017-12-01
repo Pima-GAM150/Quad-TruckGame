@@ -15,7 +15,11 @@ public class DiscordChatActor : MonoBehaviour
 {
     public delegate void ExceptionEventHandler(object sender, Exception ex);
 
+    public delegate void ClientEvent(DiscordClient client);
+
     public event ExceptionEventHandler FailedLogin;
+
+    public event ClientEvent OnBeforeConnect;
 
     public static DiscordChatActor Instance { get; private set; }
     public DiscordClient Client { get; private set; }
@@ -26,6 +30,7 @@ public class DiscordChatActor : MonoBehaviour
             CreateClient(token);
         try
         {
+            OnBeforeConnect?.Invoke(Client);
             await Client.ConnectAsync();
         }
         catch (Exception e)
@@ -39,7 +44,10 @@ public class DiscordChatActor : MonoBehaviour
     public async Task Stop()
     {
         if (Client != null)
+        {
             await Client.DisconnectAsync();
+            Client = null;
+        }
     }
 
     public void CreateClient(string token)
@@ -67,7 +75,6 @@ public class DiscordChatActor : MonoBehaviour
             MainThreadQueue.Instance.Queue(() => Client_Ready(e));
             return Task.CompletedTask;
         }
-
         Debug.Log($"{Log.Timestamp()} Discord-ClientReady: Client is connected.");
         PushNotification.Instance.Push($"Connected as: {e.Client.CurrentUser.Username}", "Success");
         return Task.CompletedTask;
