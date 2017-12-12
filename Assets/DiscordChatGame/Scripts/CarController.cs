@@ -7,9 +7,12 @@ public class CarController : MonoBehaviour {
     //public List<AxleInfo> axleInfos;
     public float maxMotorTorque = 1f;
     public float maxSteeringAngle = 1f;
+    public bool rotateOnly = false;
 
     public WheelCollider wc;
     public GameObject wheel;
+
+    private float currentSpeed = 0f;
 
     // Use this for initialization
     void Start () {
@@ -27,28 +30,16 @@ public class CarController : MonoBehaviour {
         Vector3 position;
         Quaternion rotation;
         wc.GetWorldPose(out position, out rotation);
-        //rotation.z = 90f;
-        //rotation.w = 0f;
-        rotation.y = Mathf.Clamp(rotation.y, -maxSteeringAngle, maxSteeringAngle);
-        //wheel.transform.rotation = rotation;
-        rotation.eulerAngles = new Vector3(0f, Mathf.Clamp(steering, -maxSteeringAngle, maxSteeringAngle), 90f);
-        wheel.transform.localRotation = rotation;
-        
-        //wheel.transform.rotation = new Quaternion(wheel.transform.rotation.x, Mathf.Clamp(steering, -maxSteeringAngle, maxSteeringAngle), wheel.transform.rotation.z, wheel.transform.rotation.w);
-        //Debug.Log(wc.steerAngle + ", " + rotation);
+        if(rotateOnly)
+        {
+            rotation.eulerAngles = new Vector3(wc.rpm, 0f, 0f);
+            wheel.transform.localRotation = rotation;
+        } else
+        {
+            rotation.eulerAngles = new Vector3(wc.rpm, -Mathf.Clamp(steering, -maxSteeringAngle, maxSteeringAngle), 0f);
+            wheel.transform.localRotation = rotation;
+        }
 
-        //foreach (AxleInfo axleInfo in axleInfos)
-        //{
-        //    if (axleInfo.steering)
-        //    {
-        //        axleInfo.leftWheel.steerAngle = steering;
-        //        axleInfo.rightWheel.steerAngle = steering;
-        //    }
-        //    if (axleInfo.motor)
-        //    {
-        //        axleInfo.leftWheel.motorTorque = motor;
-        //        axleInfo.rightWheel.motorTorque = motor;
-        //    }
-        //}
+        
     }
 }
