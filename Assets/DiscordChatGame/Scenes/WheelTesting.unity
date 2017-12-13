@@ -440,6 +440,9 @@ MonoBehaviour:
   maxMotorTorque: 5000
   maxSteeringAngle: 40
   rotateOnly: 0
+  xRotation: 0
+  yRotation: 0
+  zRotation: 0
   wc: {fileID: 185844505}
   wheel: {fileID: 1563400514}
 --- !u!146 &185844505
@@ -484,7 +487,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4129959152042296, guid: ce8c231a93e904b40af8c5a70fe306c2, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 3.890654
+      value: 2.26
       objectReference: {fileID: 0}
     - target: {fileID: 4129959152042296, guid: ce8c231a93e904b40af8c5a70fe306c2, type: 2}
       propertyPath: m_LocalPosition.z
@@ -510,15 +513,15 @@ Prefab:
       propertyPath: m_RootOrder
       value: 5
       objectReference: {fileID: 0}
-    - target: {fileID: 54213495633496648, guid: ce8c231a93e904b40af8c5a70fe306c2,
+    - target: {fileID: 114731301137264320, guid: ce8c231a93e904b40af8c5a70fe306c2,
         type: 2}
-      propertyPath: m_Drag
-      value: 0.1
+      propertyPath: maxMotorTorque
+      value: 10000
       objectReference: {fileID: 0}
-    - target: {fileID: 54213495633496648, guid: ce8c231a93e904b40af8c5a70fe306c2,
+    - target: {fileID: 114113444651962448, guid: ce8c231a93e904b40af8c5a70fe306c2,
         type: 2}
-      propertyPath: m_Mass
-      value: 2500
+      propertyPath: maxMotorTorque
+      value: 10000
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ce8c231a93e904b40af8c5a70fe306c2, type: 2}
@@ -555,6 +558,11 @@ Transform:
   m_Father: {fileID: 332995947}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!146 &295907605 stripped
+WheelCollider:
+  m_PrefabParentObject: {fileID: 146909893492596510, guid: ce8c231a93e904b40af8c5a70fe306c2,
+    type: 2}
+  m_PrefabInternal: {fileID: 237323774}
 --- !u!1 &302087471
 GameObject:
   m_ObjectHideFlags: 0
@@ -1105,6 +1113,11 @@ Transform:
   m_Father: {fileID: 661419188}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+--- !u!146 &544341917 stripped
+WheelCollider:
+  m_PrefabParentObject: {fileID: 146441633739389418, guid: ce8c231a93e904b40af8c5a70fe306c2,
+    type: 2}
+  m_PrefabInternal: {fileID: 237323774}
 --- !u!1 &584268506
 GameObject:
   m_ObjectHideFlags: 0
@@ -1178,6 +1191,9 @@ MonoBehaviour:
   maxMotorTorque: 5000
   maxSteeringAngle: 40
   rotateOnly: 0
+  xRotation: 0
+  yRotation: 0
+  zRotation: 0
   wc: {fileID: 584268508}
   wheel: {fileID: 327201472}
 --- !u!1 &585268714
@@ -1334,6 +1350,9 @@ MonoBehaviour:
   maxMotorTorque: 100
   maxSteeringAngle: 50
   rotateOnly: 0
+  xRotation: 0
+  yRotation: 0
+  zRotation: 0
   wc: {fileID: 767755268}
   wheel: {fileID: 0}
 --- !u!146 &767755268
@@ -1445,8 +1464,8 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 904993546}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 5, y: 1, z: 5}
+  m_LocalPosition: {x: -16.426, y: -0, z: 1.631}
+  m_LocalScale: {x: 25, y: 1, z: 25}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
@@ -1495,6 +1514,9 @@ MonoBehaviour:
   maxMotorTorque: 100
   maxSteeringAngle: 50
   rotateOnly: 0
+  xRotation: 0
+  yRotation: 0
+  zRotation: 0
   wc: {fileID: 994100431}
   wheel: {fileID: 0}
 --- !u!146 &994100431
@@ -1597,6 +1619,11 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1006134576}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!54 &1190426383 stripped
+Rigidbody:
+  m_PrefabParentObject: {fileID: 54213495633496648, guid: ce8c231a93e904b40af8c5a70fe306c2,
+    type: 2}
+  m_PrefabInternal: {fileID: 237323774}
 --- !u!1 &1264789965
 GameObject:
   m_ObjectHideFlags: 0
@@ -1641,6 +1668,9 @@ MonoBehaviour:
   maxMotorTorque: 100
   maxSteeringAngle: 50
   rotateOnly: 0
+  xRotation: 0
+  yRotation: 0
+  zRotation: 0
   wc: {fileID: 1264789968}
   wheel: {fileID: 0}
 --- !u!146 &1264789968
@@ -1716,6 +1746,9 @@ MonoBehaviour:
   maxMotorTorque: 200
   maxSteeringAngle: 40
   rotateOnly: 0
+  xRotation: 0
+  yRotation: 0
+  zRotation: 0
   wc: {fileID: 1272732523}
   wheel: {fileID: 421740191}
 --- !u!146 &1272732523
@@ -1871,6 +1904,9 @@ MonoBehaviour:
   maxMotorTorque: 200
   maxSteeringAngle: 40
   rotateOnly: 0
+  xRotation: 0
+  yRotation: 0
+  zRotation: 0
   wc: {fileID: 1542084767}
   wheel: {fileID: 2123017140}
 --- !u!146 &1542084767
@@ -1963,6 +1999,9 @@ MonoBehaviour:
   maxMotorTorque: 1
   maxSteeringAngle: 50
   rotateOnly: 0
+  xRotation: 0
+  yRotation: 0
+  zRotation: 0
   wc: {fileID: 2016695668}
   wheel: {fileID: 1546213097}
 --- !u!1 &1563400514
@@ -2672,6 +2711,88 @@ Transform:
   m_Father: {fileID: 332995947}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1989326292
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4552437199449600, guid: bd4940df2a4d0354da510dbe57d0f390, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 8.27
+      objectReference: {fileID: 0}
+    - target: {fileID: 4552437199449600, guid: bd4940df2a4d0354da510dbe57d0f390, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 1.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 4552437199449600, guid: bd4940df2a4d0354da510dbe57d0f390, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: -11.51
+      objectReference: {fileID: 0}
+    - target: {fileID: 4552437199449600, guid: bd4940df2a4d0354da510dbe57d0f390, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4552437199449600, guid: bd4940df2a4d0354da510dbe57d0f390, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4552437199449600, guid: bd4940df2a4d0354da510dbe57d0f390, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4552437199449600, guid: bd4940df2a4d0354da510dbe57d0f390, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4552437199449600, guid: bd4940df2a4d0354da510dbe57d0f390, type: 2}
+      propertyPath: m_RootOrder
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 153006691119342344, guid: bd4940df2a4d0354da510dbe57d0f390,
+        type: 2}
+      propertyPath: m_ConnectedBody
+      value: 
+      objectReference: {fileID: 1190426383}
+    - target: {fileID: 114194372670256506, guid: bd4940df2a4d0354da510dbe57d0f390,
+        type: 2}
+      propertyPath: wc
+      value: 
+      objectReference: {fileID: 295907605}
+    - target: {fileID: 114875980134876012, guid: bd4940df2a4d0354da510dbe57d0f390,
+        type: 2}
+      propertyPath: wc
+      value: 
+      objectReference: {fileID: 295907605}
+    - target: {fileID: 114057077148335008, guid: bd4940df2a4d0354da510dbe57d0f390,
+        type: 2}
+      propertyPath: wc
+      value: 
+      objectReference: {fileID: 544341917}
+    - target: {fileID: 114663475652349696, guid: bd4940df2a4d0354da510dbe57d0f390,
+        type: 2}
+      propertyPath: wc
+      value: 
+      objectReference: {fileID: 544341917}
+    - target: {fileID: 153006691119342344, guid: bd4940df2a4d0354da510dbe57d0f390,
+        type: 2}
+      propertyPath: m_ConnectedAnchor.y
+      value: 0.42299995
+      objectReference: {fileID: 0}
+    - target: {fileID: 153006691119342344, guid: bd4940df2a4d0354da510dbe57d0f390,
+        type: 2}
+      propertyPath: m_BreakForce
+      value: Infinity
+      objectReference: {fileID: 0}
+    - target: {fileID: 153006691119342344, guid: bd4940df2a4d0354da510dbe57d0f390,
+        type: 2}
+      propertyPath: m_BreakTorque
+      value: Infinity
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: bd4940df2a4d0354da510dbe57d0f390, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &2016695666
 GameObject:
   m_ObjectHideFlags: 0
@@ -2774,6 +2895,9 @@ MonoBehaviour:
   maxMotorTorque: 100
   maxSteeringAngle: 50
   rotateOnly: 0
+  xRotation: 0
+  yRotation: 0
+  zRotation: 0
   wc: {fileID: 2080236308}
   wheel: {fileID: 0}
 --- !u!146 &2080236308
