@@ -8,6 +8,9 @@ public class CarController : MonoBehaviour {
     public float maxMotorTorque = 1f;
     public float maxSteeringAngle = 1f;
     public bool rotateOnly = false;
+    public float xRotation = 0f;
+    public float yRotation = 0f;
+    public float zRotation = 0f;
 
     public WheelCollider wc;
     public GameObject wheel;
