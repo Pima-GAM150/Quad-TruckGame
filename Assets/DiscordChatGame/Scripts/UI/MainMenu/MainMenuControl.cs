@@ -44,13 +44,6 @@ public class MainMenuControl : SerializedMonoBehaviour
         TokenButton.interactable = canSubmit;
     }
 
-    private async Task GetConfig()
-    {
-        var discordConfig = await ConfigManager.Instance.GetConfig<DiscordConfig>();
-        TokenField.text = discordConfig.Token;
-        ServerField.text = discordConfig.ServerName;
-    }
-
     public void OnTokenScreenCommit()
     {
         TokenButton.interactable = false;
@@ -63,6 +56,13 @@ public class MainMenuControl : SerializedMonoBehaviour
         ctx.Client.Ready += Client_Ready;
         ctx.FailedLogin += Client_FailedLogin;
         ctx.Run(TokenField.text);
+    }
+
+    private async Task GetConfig()
+    {
+        var discordConfig = await ConfigManager.Instance.GetConfig<DiscordConfig>();
+        TokenField.text = discordConfig.Token;
+        ServerField.text = discordConfig.ServerName;
     }
 
     private void Client_FailedLogin(object sender, Exception ex)
@@ -82,6 +82,7 @@ public class MainMenuControl : SerializedMonoBehaviour
         if (!MainThreadQueue.Instance.IsMain())
         {
             MainThreadQueue.Instance.Queue(async () => await Client_Ready(e));
+            return;
         }
         var config = await ConfigManager.Instance.GetConfig<DiscordConfig>();
         config.Token = TokenField.text;
