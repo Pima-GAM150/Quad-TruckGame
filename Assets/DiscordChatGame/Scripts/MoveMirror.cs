@@ -30,7 +30,7 @@ public class MoveMirror : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        Debug.Log(main.WorldToViewportPoint(transform.position) + ", " + gameObject.GetComponent<MeshRenderer>().bounds.size);
+        Debug.Log(main.WorldToViewportPoint(transform.position));
         if(leftSide)
         {
             transform.position = main.ViewportToWorldPoint(new Vector3(0.0f, mirrorPosition.y, mirrorPosition.z));
