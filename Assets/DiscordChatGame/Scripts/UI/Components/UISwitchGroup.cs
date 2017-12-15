@@ -29,10 +29,15 @@ public class UISwitchGroup : MonoBehaviour
     {
         foreach (var obj in _switchables)
         {
-            if (obj.Key == name)
-                obj.Value.SetActive(true);
-            else
-                obj.Value.SetActive(false);
+            obj.Value.SetActive(obj.Key == name);
+        }
+    }
+
+    public void SwitchTo(int index)
+    {
+        for (int i = 0; i < _switchables.Count; ++i)
+        {
+            _switchables.ElementAt(i).Value.SetActive(i == index);
         }
     }
 

@@ -50,6 +50,8 @@ public class DiscordChatActor : MonoBehaviour
         }
     }
 
+    private string _name;
+
     public async Task Stop()
     {
         if (Client != null)
@@ -59,7 +61,7 @@ public class DiscordChatActor : MonoBehaviour
         }
     }
 
-    public void CreateClient(string token, string name)
+    public void CreateClient(string token, string guildName)
     {
         // Disable SSL Certificate Validation
         // see: https://dsharpplus.emzi0767.com/articles/hosting_rpi.html#method-4-run-your-bot-using-mono
@@ -68,7 +70,7 @@ public class DiscordChatActor : MonoBehaviour
         // Setup Client only if this is the first time.
         if (Client == null)
         {
-            _guildName = name;
+            _guildName = guildName;
             Client = new DiscordClient(GenerateConfig(token));
             Client.SetWebSocketClient<WebSocketSharpClient>();
 
@@ -83,15 +85,15 @@ public class DiscordChatActor : MonoBehaviour
     {
         if (!MainThreadQueue.Instance.IsMain())
         {
-            MainThreadQueue.Instance.Queue(() => Client_GuildAvailable(e));
+            MainThreadQueue.Instance.Queue(async () => await Client_GuildAvailable(e));
             return;
         }
         Debug.Log($"Guild Available {e.Guild.Name}");
         Guild = e.Guild;
 
-        if (e.Guild.Name != name)
+        if (e.Guild.Name != _guildName)
         {
-            await Guild.ModifyAsync(name);
+            await Guild.ModifyAsync(_guildName);
             Debug.Log($"Renamed Guild to {Guild.Name}");
         }
 
@@ -113,7 +115,7 @@ public class DiscordChatActor : MonoBehaviour
     {
         if (!MainThreadQueue.Instance.IsMain())
         {
-            MainThreadQueue.Instance.Queue(() => Client_Ready(e));
+            MainThreadQueue.Instance.Queue(async () => await Client_Ready(e));
             return;
         }
         Debug.Log($"{Log.Timestamp()} Discord-ClientReady: Client is connected.");
@@ -125,7 +127,7 @@ public class DiscordChatActor : MonoBehaviour
             return;
         }
 
-        Guild = await Client.CreateGuildAsync(name);
+        Guild = await Client.CreateGuildAsync(_guildName);
         var invite = await Guild.Channels.First().CreateInviteAsync();
         PushNotification.Instance.Push($"Invite: {invite}", "Success");
         OnInviteCreated?.Invoke(invite.ToString());
