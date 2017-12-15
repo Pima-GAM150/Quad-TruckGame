@@ -19,7 +19,7 @@ public class DiscordCommands : MonoBehaviour
     {
         if (!MainThreadQueue.Instance.IsMain())
         {
-            MainThreadQueue.Instance.Queue(async () => await Spawn(ctx, name);
+            MainThreadQueue.Instance.Queue(async () => await Spawn(ctx, name));
             return;
         }
 
@@ -41,7 +41,7 @@ public class DiscordCommands : MonoBehaviour
     {
         if (!MainThreadQueue.Instance.IsMain())
         {
-            MainThreadQueue.Instance.Queue(async () => await List(ctx);
+            MainThreadQueue.Instance.Queue(async () => await List(ctx));
             return;
         }
 

@@ -10,6 +10,8 @@ using System;
 using DSharpPlus.EventArgs;
 using System.Net;
 using DSharpPlus.Exceptions;
+using DSharpPlus.Entities;
+using System.Linq;
 
 public class DiscordChatActor : MonoBehaviour
 {
@@ -17,17 +19,24 @@ public class DiscordChatActor : MonoBehaviour
 
     public delegate void ClientEvent(DiscordClient client);
 
+    public delegate void NotificationEvent(string message);
+
     public event ExceptionEventHandler FailedLogin;
 
     public event ClientEvent OnBeforeConnect;
 
+    public event NotificationEvent OnInviteCreated;
+
+    public DiscordGuild Guild;
+
+    private string _guildName;
     public static DiscordChatActor Instance { get; private set; }
     public DiscordClient Client { get; private set; }
 
-    public async Task Run(string token)
+    public async Task Run(string token, string name)
     {
         if (Client == null)
-            CreateClient(token);
+            CreateClient(token, name);
         try
         {
             OnBeforeConnect?.Invoke(Client);
@@ -50,7 +59,7 @@ public class DiscordChatActor : MonoBehaviour
         }
     }
 
-    public void CreateClient(string token)
+    public void CreateClient(string token, string name)
     {
         // Disable SSL Certificate Validation
         // see: https://dsharpplus.emzi0767.com/articles/hosting_rpi.html#method-4-run-your-bot-using-mono
@@ -59,25 +68,67 @@ public class DiscordChatActor : MonoBehaviour
         // Setup Client only if this is the first time.
         if (Client == null)
         {
+            _guildName = name;
             Client = new DiscordClient(GenerateConfig(token));
             Client.SetWebSocketClient<WebSocketSharpClient>();
 
             Client.DebugLogger.LogMessageReceived += DebugLogger_LogMessageReceived;
             Client.Ready += Client_Ready;
             Client.ClientErrored += Client_ClientErrored;
+            Client.GuildAvailable += Client_GuildAvailable;
         }
     }
 
-    private Task Client_Ready(ReadyEventArgs e)
+    private async Task Client_GuildAvailable(GuildCreateEventArgs e)
+    {
+        if (!MainThreadQueue.Instance.IsMain())
+        {
+            MainThreadQueue.Instance.Queue(() => Client_GuildAvailable(e));
+            return;
+        }
+        Debug.Log($"Guild Available {e.Guild.Name}");
+        Guild = e.Guild;
+
+        if (e.Guild.Name != name)
+        {
+            await Guild.ModifyAsync(name);
+            Debug.Log($"Renamed Guild to {Guild.Name}");
+        }
+
+        var invites = await Guild.GetInvitesAsync();
+        DiscordInvite invite;
+        if (invites.Any())
+        {
+            invite = invites.First();
+        }
+        else
+        {
+            invite = await Guild.GetDefaultChannel().CreateInviteAsync();
+        }
+        PushNotification.Instance.Push($"Invite: {invite}", "Success");
+        OnInviteCreated?.Invoke(invite.ToString());
+    }
+
+    private async Task Client_Ready(ReadyEventArgs e)
     {
         if (!MainThreadQueue.Instance.IsMain())
         {
             MainThreadQueue.Instance.Queue(() => Client_Ready(e));
-            return Task.CompletedTask;
+            return;
         }
         Debug.Log($"{Log.Timestamp()} Discord-ClientReady: Client is connected.");
         PushNotification.Instance.Push($"Connected as: {e.Client.CurrentUser.Username}", "Success");
-        return Task.CompletedTask;
+
+        if (Client.Guilds.Count > 0)
+        {
+            Debug.Log($"Guild already exists. {Client.Guilds.First()}");
+            return;
+        }
+
+        Guild = await Client.CreateGuildAsync(name);
+        var invite = await Guild.Channels.First().CreateInviteAsync();
+        PushNotification.Instance.Push($"Invite: {invite}", "Success");
+        OnInviteCreated?.Invoke(invite.ToString());
     }
 
     private Task Client_ClientErrored(ClientErrorEventArgs e)

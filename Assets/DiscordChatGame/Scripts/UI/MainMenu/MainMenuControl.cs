@@ -52,10 +52,10 @@ public class MainMenuControl : SerializedMonoBehaviour
 
         var ctx = DiscordChatActor.Instance;
         Debug.Log($"{Log.Timestamp()} Sending Token {TokenField.text} to DiscordLauncher");
-        ctx.CreateClient(TokenField.text);
+        ctx.CreateClient(TokenField.text, ServerField.text);
         ctx.Client.Ready += Client_Ready;
         ctx.FailedLogin += Client_FailedLogin;
-        ctx.Run(TokenField.text);
+        ctx.Run(TokenField.text, ServerField.text);
     }
 
     private async Task GetConfig()
